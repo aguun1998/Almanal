@@ -7,6 +7,7 @@ date-released: 2026-08-22
 authors:
   - family-names: "Jeong"
     given-names: "Giseong"
+doi: "10.5281/zenodo.22058048"
 repository-code: "https://github.com/aguun1998/Almanal"
 url: "https://github.com/aguun1998/Almanal"
 license: Apache-2.0
