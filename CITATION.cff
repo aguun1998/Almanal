@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use ALMANAL or Lambda, please cite this software."
+title: "ALMANAL 20.1 / Lambda 0.25 L4"
+type: software
+version: "20.1 / 0.25"
+date-released: 2026-08-22
+authors:
+  - family-names: "Jeong"
+    given-names: "Giseong"
+repository-code: "https://github.com/aguun1998/Almanal"
+url: "https://github.com/aguun1998/Almanal"
+license: Apache-2.0
