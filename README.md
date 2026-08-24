@@ -18,7 +18,7 @@ It began as an AI-oriented framework for producing and improving algorithms. As 
 
 **Λ was created during that ALMANAL improvement process.** It was not the original starting point of the project and was not introduced as an unrelated parallel language project. It emerged as a way to reduce representation and implementation burden while preserving the structure needed for deterministic parsing, static checking, transformation, verification, and native execution.
 
-ALMANAL was subsequently moved onto Λ as its native implementation substrate. The current repository therefore contains both the ALMANAL system and the Λ compiler/runtime path that grew out of ALMANAL's own optimization process.
+ALMANAL was subsequently moved onto Λ as its native implementation substrate. The current repository therefore contains both the ALMANAL system and the Λ compiler path that grew out of ALMANAL's own optimization process.
 
 ## Purpose of ALMANAL
 
@@ -32,17 +32,62 @@ Typical use:
 4. Let the model use ALMANAL's internal procedures for construction, comparison, falsification, verification, reuse, and burden reduction as needed.
 5. Request the resulting algorithm, implementation, proof/evidence summary, or other required output.
 
-ALMANAL's internal mechanisms include:
+The verification machinery exists to support this generation/improvement task: it is used to reject bad candidates, narrow claims, find counterexamples, and decide whether a proposed change is justified.
 
-- candidate construction and comparison;
-- explicit evidence and provenance handling;
-- counterexample-oriented falsification;
-- bounded search and verification procedures;
-- comparison of time, memory, verification, maintenance, and related burden;
-- reuse-first decisions;
-- necessary-action minimization, so work not required for the current objective can be omitted.
+## ALMANAL architecture
 
-These mechanisms support the main task: producing or improving algorithms with the AI model.
+ALMANAL separates the object being improved from the evidence and context used to judge it. A useful high-level representation is:
+
+```text
+Candidate = (
+    TaskBinding T,
+    ContextGraph C,
+    AlgorithmCore A,
+    EvidenceGraph E
+)
+```
+
+The four parts have different roles:
+
+- **TaskBinding** — the objective, constraints, success conditions, and task-specific contract.
+- **ContextGraph** — assumptions, facts, dependencies, reusable knowledge, and the context required by the current task.
+- **AlgorithmCore** — the candidate algorithm or transformation currently being constructed or improved.
+- **EvidenceGraph** — proofs, checks, observations, counterexamples, provenance, and other evidence relevant to claims about the candidate.
+
+Keeping these concerns separate is deliberate. Changing an algorithm does not require treating all context as new, and adding evidence does not require rewriting the algorithm. Improvement can therefore be expressed as localized changes to context, algorithm, or evidence rather than as an unconditional full restart.
+
+At a high level, an ALMANAL-guided improvement cycle is:
+
+```text
+Problem / objective
+        |
+        v
+Bind task and relevant context
+        |
+        v
+Reuse what is already sufficient
+        |
+        v
+Generate or modify candidate algorithm
+        |
+        v
+Attempt falsification / counterexample search
+        |
+        v
+Update evidence and claim scope
+        |
+        v
+Compare benefit against burden
+        |
+        v
+Accept, reject, narrow, or leave unresolved
+```
+
+The process is intentionally selective. If a result can be closed deductively, unnecessary experiment is avoided. If existing structure can be reused, regeneration is avoided. If a proposed improvement adds more time, memory, verification, or maintenance burden than its benefit justifies, it can be rejected even when it is locally interesting.
+
+ALMANAL therefore treats several costs as first-class design quantities rather than optimizing runtime alone. Depending on the task, relevant burden may include execution time, memory, search effort, verification work, maintenance, external dependency, and the number of actions required to reach a justified result.
+
+Falsification is asymmetric by design: finding one valid counterexample may be enough to refute a universal claim, while failing to find one is not automatically promoted into proof. Claims remain scoped to the evidence and contract that support them.
 
 ## Why Λ exists
 
@@ -61,13 +106,67 @@ The practical design goals include:
 
 Λ0 is the current compact core language and compiler implementation used by ALMANAL.
 
+## Λ0 architecture
+
+Λ0 uses a compact, explicitly structured source representation. The syntax is designed so that machine-generated code has clear structural boundaries and a deterministic interpretation without depending on formatting conventions intended primarily for human readers.
+
+The native compiler path can be summarized as:
+
+```text
+Λ source
+   |
+   v
+Parse / structural decoding
+   |
+   v
+Type and effect checks
+   |
+   v
+Intermediate representation
+   |
+   v
+Native x86-64 / ELF emission
+   |
+   v
+Linux executable
+```
+
+The compiler exposes these stages through operations such as `check`, `check-types`, `check-effects`, `emit-ir`, `build`, `verify`, and `profile`.
+
+The canonical native path emits Linux x86-64 ELF output directly rather than using C or C++ as a required source-to-source backend. The compiler source is itself maintained in Λ (`compiler/native/expr_elfgen.l0`), while `compiler/l0c` is the corresponding native executable distributed in the repository.
+
+This architecture keeps the language implementation close to the representation it is intended to process: the same compact language used by ALMANAL is also used to express the compiler source.
+
 ### Why Hangul identifiers are used
 
 Λ0 0.40 uses modern Hangul syllables for many compact identifiers. This is an engineering choice for representation economy, not a claim that Hangul is intrinsically more efficient than ASCII.
 
 A modern Hangul syllable occupies three bytes in UTF-8. When one syllable replaces an ASCII identifier longer than three bytes, source size can decrease. More importantly, Hangul provides a large set of distinct single-syllable symbols, so many identifiers can remain one textual symbol long instead of requiring multi-character mnemonic names.
 
-For machine-generated and machine-transformed code, that gives Λ a dense identifier space while retaining deterministic textual identity. Tokenizer cost is model-dependent, so token savings are measured rather than inferred from character count alone.
+For machine-generated and machine-transformed code, that gives Λ a dense identifier space while retaining deterministic textual identity. It also makes it possible to assign many internal functions and symbols compact one-character names without exhausting a small alphabet.
+
+Tokenizer cost is model-dependent, so token savings are measured rather than inferred from character count alone.
+
+## Relationship between ALMANAL and Λ
+
+ALMANAL and Λ operate at different levels.
+
+```text
+AI model
+   |
+   | uses ALMANAL as a generation/improvement framework
+   v
+Algorithm design, falsification, verification, comparison
+   |
+   | may be represented and implemented in Λ
+   v
+Λ source
+   |
+   v
+Native executable
+```
+
+ALMANAL defines the procedure for producing and improving algorithms. Λ provides a compact implementation substrate that was created later, as a consequence of optimizing ALMANAL itself.
 
 ## Using ALMANAL with an AI
 
