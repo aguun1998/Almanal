@@ -1,139 +1,59 @@
 # ALMANAL
 
-**ALMANAL is an AI-oriented algorithm synthesis, optimization, and verification system built on Λ, a programming language designed primarily for AI rather than human authors.**
+ALMANAL is an algorithm synthesis, optimization, and verification system implemented on Λ, a compact programming language designed primarily for machine generation, inspection, and transformation.
 
-Λ intentionally deprioritizes many conventions that exist mainly for human programming convenience. Instead, it prioritizes:
+## Current release
 
-* compact representation
-* deterministic structure
-* static verification
-* low ambiguity
-* direct native execution
-* efficient AI generation, inspection, and transformation
+- **ALMANAL:** 24.2
+- **Λ0:** 0.40
+- **Target:** Linux x86-64
 
-ALMANAL uses Λ as its native substrate for deriving, synthesizing, validating, and improving algorithms.
+## Λ0
 
-## Current Release
+Λ0 is a statically checked language with a compact textual representation and a native compiler targeting Linux x86-64 ELF executables.
 
-* **ALMANAL:** 20.1
-* **Λ:** 0.25
-* **Canonical surface:** L4
-* **Target:** Linux x86-64
+The current package includes the compiler executable and its Λ source. The compiler provides `build`, `profile`, `check`, `check-types`, `check-effects`, `emit-ir`, and `verify` operations.
 
-## Λ
+### Hangul identifiers and representation economy
 
-Λ is a statically checked, direct-native programming language designed for AI systems.
+Λ0 0.40 uses modern Hangul syllables for many compact identifiers. This is an engineering choice for representation economy, not a claim that Hangul is intrinsically more efficient than ASCII.
 
-Its canonical compiler can compile Λ source directly into Linux x86-64 ELF executables without translating through C, C++, Python, or another source language.
+A modern Hangul syllable occupies three bytes in UTF-8. When one syllable replaces an ASCII identifier longer than three bytes, the source representation can become smaller. More generally, Hangul provides a large set of distinct single-syllable symbols, allowing many identifiers to remain one source symbol long instead of requiring multi-character mnemonic names. For machine-generated and machine-transformed code, this can reduce source size and identifier-handling overhead while preserving deterministic symbol identity.
 
-Current language features include:
-
-* `i64`, `u64`, `bool`, `unit`, and strings
-* arrays and tuples
-* tagged sums
-* functions and recursion
-* lexical bindings and mutable state
-* conditionals and loops
-* file and process operations
-* explicit effects
-* compile-time worlds, claims, and bounded proofs
-* direct ELF64 machine-code generation
-* L4 compact canonical syntax
-
-The compiler is self-hosted: the Λ compiler can compile its own canonical source and reaches a reproducible native fixed point.
-
-## L4
-
-L4 is the canonical textual representation of Λ0 0.25.
-
-It reduces source and context size while preserving deterministic decoding and semantic structure.
-
-L4 uses:
-
-* compact semantic atoms
-* local mnemonic identifier aliases
-* explicit structural checkpoints
-* checked closing-run encoding
-* hard rejection of ambiguous or malformed input
-
-L4 is not intended to maximize human readability.
-
-Its goal is:
-
-> **semantic compression without semantic blindness**
+Tokenizer cost is model-dependent, so token savings are not assumed from character count alone; they must be measured for the tokenizer in use.
 
 ## ALMANAL
 
-ALMANAL is designed to make algorithm discovery more structured than unconstrained brute-force program search.
+ALMANAL uses Λ as its implementation substrate. The current implementation combines algorithm construction and evaluation with explicit evidence handling, counterexample-oriented falsification, and burden-aware improvement procedures.
 
-Its current synthesis architecture can be summarized as:
+The release contains both the Λ source and the corresponding native executable.
 
-```text
-World / Rules / Goal / Prior
-        ↓
-Deductive Baseline
-        ↓
-Structural Synthesis
-        ↓
-Constraint / CEGIS Guided Search
-        ↓
-Semantic Compression
-        ↓
-Validation
-        ↓
-Verified Policy Improvement
-```
-
-The system separates:
-
-* theoretical reachability
-* practical discoverability
-* correctness and evidence
-
-A complete search lane remains available as a backstop, while practical synthesis focuses on structured and guided search.
-
-## Repository Structure
+## Repository layout
 
 ```text
-language/
-  SPEC.md
-  COMPACT_NOTATION.md
+almanal/
+  almanal        Native ALMANAL executable
+  almanal.l0     ALMANAL Λ source
 
 compiler/
+  l0c            Native Λ compiler
   native/
-    expr_elfgen.l0
+    expr_elfgen.l0   Λ compiler source
 
-almanal/
-  almanal.l0
-
-LAMBDA_TUTORIAL.md
+README.md
+CITATION.cff
+LICENSE
 ```
 
-## Documentation
+## Basic compiler use
 
-For a practical introduction to Λ:
-
-**[`LAMBDA_TUTORIAL.md`](LAMBDA_TUTORIAL.md)**
-
-Normative language specification:
-
-**[`language/SPEC.md`](language/SPEC.md)**
-
-Canonical L4 notation:
-
-**[`language/COMPACT_NOTATION.md`](language/COMPACT_NOTATION.md)**
-
-## Quick Start
-
-The current native binaries target **Linux x86-64**.
-
-Check Λ source:
+Check a Λ source file:
 
 ```bash
 ./compiler/l0c check program.l0
 ```
 
-Compile Λ source:
+Compile it:
 
 ```bash
 ./compiler/l0c build program.l0 program
@@ -145,23 +65,9 @@ Run the resulting executable:
 ./program
 ```
 
-## Project Status
+## Citation
 
-The core Λ compiler, native self-host path, L4 canonical surface, and current ALMANAL architecture are implemented and regression-tested.
-
-Current research work focuses more on **external validation** than on adding language features, especially:
-
-* blind algorithm rediscovery
-* broader synthesis domains
-* raw problem → WorldSpec extraction
-* stronger semantic-equivalence verification
-* novel algorithm discovery
-
-This project does **not** currently claim that Λ's optimizer is more mature than GCC or LLVM, nor that ALMANAL can efficiently discover every computable algorithm.
-
-The purpose of the project is to explore a different software-development stack:
-
-> **What should programming languages and algorithm synthesis systems look like when the primary programmer is an AI rather than a human?**
+Citation metadata is provided in [`CITATION.cff`](CITATION.cff).
 
 ## License
 
