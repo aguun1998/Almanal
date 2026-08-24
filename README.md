@@ -1,27 +1,63 @@
 # ALMANAL
 
-ALMANAL is an algorithm synthesis, optimization, and verification system implemented on Λ, a compact programming language designed primarily for machine generation, inspection, and transformation.
+ALMANAL is a machine-oriented framework for guiding a capable AI model through algorithm generation and iterative algorithm improvement.
+
+The intended use is simple: provide ALMANAL to the AI as working context, provide the problem and objective, and ask the model to generate or improve an algorithm under ALMANAL's procedures. Verification, falsification, evidence handling, comparison, and burden analysis are parts of that generation/improvement process rather than separate end goals.
 
 ## Current release
 
 - **ALMANAL:** 24.2
 - **Λ0:** 0.40
-- **Target:** Linux x86-64
+- **Native target:** Linux x86-64
+
+## Project origin and chronology
+
+ALMANAL came first.
+
+It began as an AI-oriented framework for producing and improving algorithms. As ALMANAL itself was repeatedly improved, the implementation language and representation became part of the optimization problem: conventional programming languages retain syntax, naming conventions, abstractions, and tooling assumptions that are useful for human programmers but are not always necessary when the primary author and transformer is an AI.
+
+**Λ was created during that ALMANAL improvement process.** It was not the original starting point of the project and was not introduced as an unrelated parallel language project. It emerged as a way to reduce representation and implementation burden while preserving the structure needed for deterministic parsing, static checking, transformation, verification, and native execution.
+
+ALMANAL was subsequently moved onto Λ as its native implementation substrate. The current repository therefore contains both the ALMANAL system and the Λ compiler/runtime path that grew out of ALMANAL's own optimization process.
+
+## Purpose of ALMANAL
+
+ALMANAL is intended to be supplied to a sufficiently capable AI model as an algorithm-generation and algorithm-improvement framework.
+
+Typical use:
+
+1. Provide the ALMANAL source/context to the AI model.
+2. Provide the problem, constraints, available evidence, and objective.
+3. Ask the model to generate an algorithm or improve an existing one using ALMANAL.
+4. Let the model use ALMANAL's internal procedures for construction, comparison, falsification, verification, reuse, and burden reduction as needed.
+5. Request the resulting algorithm, implementation, proof/evidence summary, or other required output.
+
+ALMANAL's internal mechanisms include:
+
+- candidate construction and comparison;
+- explicit evidence and provenance handling;
+- counterexample-oriented falsification;
+- bounded search and verification procedures;
+- comparison of time, memory, verification, maintenance, and related burden;
+- reuse-first decisions;
+- necessary-action minimization, so work not required for the current objective can be omitted.
+
+These mechanisms support the main task: producing or improving algorithms with the AI model.
 
 ## Why Λ exists
 
-Λ was created for a setting in which the primary programmer may be an AI rather than a human.
+Λ is the language that emerged while optimizing ALMANAL itself.
 
-Conventional programming languages necessarily devote part of their syntax, naming practice, tooling model, and abstraction surface to human readability, familiarity, and manual development. Λ explores a different design point: retain the structure needed for deterministic parsing, static checking, transformation, and native execution, while reducing representation and conventions that are useful mainly for human convenience.
+Its design assumes that source may primarily be generated, inspected, transformed, and maintained by machines rather than manually authored by humans. This changes which costs are worth optimizing.
 
-The practical design goals are:
+The practical design goals include:
 
 - compact source representation;
 - deterministic syntax and symbol identity;
 - static type and effect checking;
-- direct machine-oriented generation and transformation;
+- low-cost machine generation and transformation;
 - reproducible verification paths;
-- native Linux x86-64 execution.
+- direct native execution on Linux x86-64.
 
 Λ0 is the current compact core language and compiler implementation used by ALMANAL.
 
@@ -29,49 +65,28 @@ The practical design goals are:
 
 Λ0 0.40 uses modern Hangul syllables for many compact identifiers. This is an engineering choice for representation economy, not a claim that Hangul is intrinsically more efficient than ASCII.
 
-A modern Hangul syllable occupies three bytes in UTF-8. When one syllable replaces an ASCII identifier longer than three bytes, the source representation can become smaller. More importantly, Hangul provides a large set of distinct single-syllable symbols, allowing many identifiers to remain one source symbol long instead of requiring multi-character mnemonic names.
+A modern Hangul syllable occupies three bytes in UTF-8. When one syllable replaces an ASCII identifier longer than three bytes, source size can decrease. More importantly, Hangul provides a large set of distinct single-syllable symbols, so many identifiers can remain one textual symbol long instead of requiring multi-character mnemonic names.
 
-For machine-generated and machine-transformed code, this provides a dense identifier space while retaining deterministic textual identity. Tokenizer cost remains model-dependent, so token savings are measured rather than assumed from character count alone.
+For machine-generated and machine-transformed code, that gives Λ a dense identifier space while retaining deterministic textual identity. Tokenizer cost is model-dependent, so token savings are measured rather than inferred from character count alone.
 
-## Why ALMANAL exists
+## Using ALMANAL with an AI
 
-ALMANAL was created to make algorithm construction and improvement a more explicit computational process.
+ALMANAL is primarily intended to be used as AI context rather than as a human-facing interactive application.
 
-Its role is to represent candidate algorithms, evaluate them against task and evidence constraints, search for improvements, test counterexamples, and compare alternatives while accounting for the burden required to obtain and maintain a result.
-
-The implementation includes mechanisms for:
-
-- algorithm candidate construction and comparison;
-- explicit evidence and provenance handling;
-- counterexample-oriented falsification;
-- bounded search and verification procedures;
-- Pareto-style comparison of time, memory, verification, maintenance, and related burden;
-- reuse-first and necessary-action decisions intended to avoid work that is not required for the current objective.
-
-ALMANAL uses Λ as its native implementation substrate. The release contains both the Λ source and the corresponding Linux x86-64 executable.
-
-## Repository layout
+A minimal instruction pattern is:
 
 ```text
-almanal/
-  almanal            Native ALMANAL executable
-  almanal.l0         ALMANAL Λ source
-
-compiler/
-  l0c                Native Λ compiler
-  native/
-    expr_elfgen.l0   Λ compiler source
-
-README.md
-CITATION.cff
-LICENSE
+Use the supplied ALMANAL framework.
+Generate an algorithm for the following problem, or improve the supplied algorithm.
+Apply ALMANAL's verification and falsification procedures as part of the work.
+Return the final algorithm and the requested implementation/output.
 ```
 
-## Basic use
+For difficult tasks, use a model with enough context capacity and reasoning capability to retain both ALMANAL and the target problem during the same work session.
 
-The included executables target **Linux x86-64**.
+## Λ compiler
 
-### Λ compiler
+The included native compiler targets **Linux x86-64**.
 
 Check a Λ source file:
 
@@ -106,9 +121,11 @@ Verify that a binary corresponds to a source file:
 
 The compiler also exposes `profile` and `emit-ir` operations.
 
-### ALMANAL
+## Native ALMANAL executable
 
-ALMANAL uses a compact numeric stdin protocol intended primarily for programmatic use. Mode `0` performs the built-in self-check:
+The repository also contains the native ALMANAL executable and its Λ source. These provide the machine-level implementation and self-check path; they are not the primary human-facing usage model described above.
+
+Mode `0` performs the built-in self-check:
 
 ```bash
 printf '0\n' | ./almanal/almanal
@@ -120,7 +137,22 @@ A successful run prints:
 ALMANAL-LAMBDA-SELFCHECK-PASS
 ```
 
-Other modes accept mode-specific numeric inputs through stdin and expose the synthesis, verification, falsification, evidence, burden-comparison, and related operations implemented in `almanal/almanal.l0`.
+## Repository layout
+
+```text
+almanal/
+  almanal            Native ALMANAL executable
+  almanal.l0         ALMANAL Λ source
+
+compiler/
+  l0c                Native Λ compiler
+  native/
+    expr_elfgen.l0   Λ compiler source
+
+README.md
+CITATION.cff
+LICENSE
+```
 
 ## Citation
 
