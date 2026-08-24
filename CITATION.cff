@@ -1,9 +1,9 @@
 cff-version: 1.2.0
 message: "If you use ALMANAL or Lambda, please cite this software."
-title: "ALMANAL 20.1 / Lambda 0.25 L4"
+title: "ALMANAL 24.2 / Lambda 0.40"
 type: software
-version: "20.1 / 0.25"
-date-released: 2026-08-22
+version: "24.2 / 0.40"
+date-released: 2026-08-24
 authors:
   - family-names: "Jeong"
     given-names: "Giseong"
