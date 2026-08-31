@@ -1,12 +1,11 @@
 cff-version: 1.2.0
-message: "If you use ALMANAL or Lambda, please cite this software."
-title: "ALMANAL 24.2 / Lambda 0.40"
+message: "If you use ALMANAL Lambda, please cite this software."
+title: "ALMANAL Lambda"
 type: software
-version: "24.2 / 0.40"
-date-released: 2026-08-24
+date-released: 2026-08-31
 authors:
   - family-names: "Jeong"
-    given-names: "Giseong"
+    given-names: "GiSeong"
 doi: "10.5281/zenodo.22058048"
 repository-code: "https://github.com/aguun1998/Almanal"
 url: "https://github.com/aguun1998/Almanal"
