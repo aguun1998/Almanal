@@ -1,6 +1,4 @@
-from pathlib import Path
 
-readme = """# ALMANAL_R v2.0
 
 ## Overview
 
@@ -258,6 +256,4 @@ For a new task:
 No license is specified in this README.
 """
 
-path = Path("/mnt/data/README.md")
-path.write_text(readme, encoding="utf-8")
-print(f"Updated {path} ({path.stat().st_size} bytes)")
+
